@@ -1,0 +1,4 @@
+name: sintyoku
+version: '${project.version}'
+main: net.shmn7iii.sintyoku.Sintyoku
+api-version: '1.20'
