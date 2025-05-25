@@ -23,14 +23,21 @@ jobs:
       - name: Build with Maven
         run: mvn package
 
-      - name: Tag
-        run: |
-          git tag "v$env:GitVersion_SemVer"
-          git push origin "v$env:GitVersion_SemVer"
+      - name: Define tag name
+        env:
+          TZ: 'Asia/Tokyo'
+        run: echo "RELEASE_TAG=v$(date '+%Y%m%d_%H%M%S')" >> $GITHUB_ENV
 
-      - name: Release
-        uses: softprops/action-gh-release@v2
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: v${{ env.GitVersion_SemVer }}
-          files: |
-            sintyoku.jar
+          tag_name: ${{ env.RELEASE_TAG }}
+          release_name: ${{ env.RELEASE_TAG }}
+
+      - name: Upload assets
+        run: |
+          gh release upload ${{ env.RELEASE_TAG }} sintyoku.jar --clobber
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
