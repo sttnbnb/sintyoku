@@ -23,8 +23,14 @@ jobs:
       - name: Build with Maven
         run: mvn package
 
+      - name: Tag
+        run: |
+          git tag "v$env:GitVersion_SemVer"
+          git push origin "v$env:GitVersion_SemVer"
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
+          name: v${{ env.GitVersion_SemVer }}
           files: |
             sintyoku.jar
